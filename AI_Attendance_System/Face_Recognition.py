@@ -13,7 +13,7 @@ names=[] # names of images
 myList = os.listdir(path)
 
 for img in myList:
-    currentImg = cv2.imread(f'{path}/{img}') # used to load image
+    currentImg = cv2.imread(f'{path}/{img}') # used to load images
     images.append(currentImg) #appends current image to images list
     names.append(os.path.splitext(img[0])) # used to remove .jpg and append just the name to names list
 
