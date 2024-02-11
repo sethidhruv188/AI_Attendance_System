@@ -70,5 +70,5 @@ while True:
        
     cv2.imshow('Webcam',img) 
     
-    if cv2.waitKey(1) & 0xFF == 'q': # press 'q' to terminate program
+    if cv2.waitKey(1) & 0xFF == 'q': # press 'q' to terminate the program
         break
