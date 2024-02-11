@@ -1,4 +1,6 @@
-import face_recognition 
+import sys
+
+import face_recognition
 import cv2
 import numpy as np
 import os
@@ -68,7 +70,10 @@ while True:
             cv2.putText(img,name,(x1+6,y2-6),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(255,255,255),2)
             markAttendance(name) # calls the function to mark attendance
        
-    cv2.imshow('Webcam',img) 
-    
-    if cv2.waitKey(1) & 0xFF == 'q': # press 'q' to terminate the program
+    cv2.imshow('Webcam',img)
+
+    key = cv2.waitKey(0)
+
+    if key == 27 or key == 113: # terminates the program if 'esc' or 'q' is pressed
         break
+    cv2.destroyAllWindows()
