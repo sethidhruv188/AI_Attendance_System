@@ -1,79 +1,141 @@
-import sys
+import pymysql  # Used for connecting to MySQL database
+import face_recognition  # Provides face recognition functionality
+import cv2  # Used for webcam access and image processing
+import numpy as np  # Provides support for numerical arrays and operations
+import pickle # Used for serializing and deserializing Python objects
+from datetime import datetime  # Provides functionality to work with dates and timestamps
+import os  # Used for interacting with the operating system
+import threading  # Provides support for multithreading
 
-import face_recognition
-import cv2
-import numpy as np
-import os
-import csv 
-from datetime import datetime 
+# MySQL Database Configuration
+db_host = '127.0.0.1'  # Database host address
+db_user = 'root'  # Database username
+db_password = 'sethidhruv188'  # Database password
+db_name = 'faces'  # Database name
 
-path = 'Images_test'
+# Establish MySQL connection
+connection = pymysql.connect(host=db_host, user=db_user, passwd=db_password, database=db_name, charset='utf8', use_unicode=True)
+cursor = connection.cursor()
 
-images=[] # list of all images
-classNames=[] # names of images
+def initialize_database():
+    """
+    Initialize the MySQL database by creating the 'testFace' table if it doesn't exist.
+    """
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS testFace (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            face_encoding BLOB
+        )
+    """)
+    connection.commit()
 
-myList = os.listdir(path)
+def get_known_encodings():
+    """
+    Retrieve known face encodings from the database.
+    """
+    cursor.execute("SELECT face_encoding FROM testFace")
+    return [pickle.loads(row[0]) for row in cursor.fetchall()]
 
-for img in myList:
-    currentImg = cv2.imread(f'{path}/{img}') # used to load images
-    images.append(currentImg) #appends current image to images list
-    classNames.append(os.path.splitext(img)[0]) # used to remove .jpg and append just the name to classNames list
+def get_class_names():
+    """
+    Retrieve known class names from the database.
+    """
+    cursor.execute("SELECT name FROM testFace")
+    return [row[0] for row in cursor.fetchall()]
 
+def store_encoding_to_db(name, encoding):
+    """
+    Store face encoding and name in the 'testFace' table.
+    """
+    encoding_bytes = pickle.dumps(encoding)
+    cursor.execute("INSERT INTO testFace (name, face_encoding) VALUES (%s, %s)", (name, encoding_bytes))
+    connection.commit()
 
-def findEncodings(images): # function to find encodings from image
-    encodeList=[]
-    for img in images:
-        img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB) # converts image to RGB
-        encodeImg = face_recognition.face_encodings(img)[0] # finds encodings of image
-        encodeList.append(encodeImg) # appends the encodings to list
-    return encodeList
+def mark_attendance(name):
+    """
+    Mark attendance in the 'Attendance.csv' file.
+    """
+    with open('Attendance.csv', 'r+') as f:
+        my_data_list = f.readlines()
+        name_list = [line.split(',')[0] for line in my_data_list]
 
-def markAttendance(name): # function to mark attendance in .csv file
-    with open('Attendance.csv','r+') as f: # opens attendance.csv file
-        myDataList = f.readlines()
-        nameList = []
-        for line in myDataList:
-            entry = line.split(',') # splits the entry based on comma
-            nameList.append(entry[0]) # appends the name to nameList
+        if name not in name_list:  # Check if the name is not already in the attendance list
+            now = datetime.now()
+            date_string = now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name},{date_string}')  # Append the name and timestamp to the attendance file
 
-        if name not in nameList:
-            now = datetime.now() 
-            dateString = now.strftime('%H:%M:%S') # formats the dateString into HH:MM:SS format
-            f.writelines(f'\n{name},{dateString}')
+def webcam_thread():
+    """
+    Separate thread for capturing frames from the webcam.
+    """
+    video_capture = cv2.VideoCapture(0)  # Initialize video capture from webcam
 
+    # Initialize face recognition
+    known_encodings = get_known_encodings()
+    class_names = get_class_names()
 
-encodeListKnown=findEncodings(images) # calls the findEncodings function
-print('ENCODING COMPLETE.')
+    print('ENCODING COMPLETE.')  # Print message after retrieving known face encodings
 
-video_capture = cv2.VideoCapture(0)
+    try:
+        while True:
+            success, img = video_capture.read()  # Read a frame from the webcam
+            img_s = cv2.resize(img, (0, 0), None, 0.25, 0.25)  # Resize the frame for faster processing
+            img_s = cv2.cvtColor(img_s, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
 
-while True:
-    success,img = video_capture.read()
-    imgS = cv2.resize(img,(0,0),None,0.25,0.25) # scales image to 0.25 of its original size
-    imgS = cv2.cvtColor(imgS,cv2.COLOR_BGR2RGB)
+            faces_curr_frame = face_recognition.face_locations(img_s)  # Find face locations in the current frame
+            encodes_curr_frame = face_recognition.face_encodings(img_s, faces_curr_frame)  # Find face encodings in the current frame
 
-    facesCurrFrame = face_recognition.face_locations(imgS) # finds locations of faces in current frame
-    encodesCurrFrame = face_recognition.face_encodings(imgS,facesCurrFrame) # finds encodings of faces in current frame
+            for encode_face, face_loc in zip(encodes_curr_frame, faces_curr_frame):
+                matches = face_recognition.compare_faces(known_encodings, encode_face)
+                face_dis = face_recognition.face_distance(known_encodings, encode_face)
+                match_index = np.argmin(face_dis)
 
-    for encodeFace, faceLoc in zip(encodesCurrFrame,facesCurrFrame): # grabs one face location from facesCurrFrame and then it will grab the encoding from encodesCurrFrame
-        matches = face_recognition.compare_faces(encodeListKnown,encodeFace) # compares faces from encodeListKnown and encodeFace
-        faceDis = face_recognition.face_distance(encodeListKnown,encodeFace) # gives us the face distance in the form of a list - lowest distance is best match
-        matchIndex = np.argmin(faceDis) # gives us the minimum value
+                if matches[match_index]:  # Check if the face matches a known face
+                    name = class_names[match_index].upper()
 
-        if matches[matchIndex]:
-            name = classNames[matchIndex].upper()
-            # code to draw a rectangle around the face and display the name of the person
-            y1,x2,y2,x1 = faceLoc
-            y1,x2,y2,x1 = y1*4,x2*4,y2*4,x1*4
-            cv2.rectangle(img,(x1,y1),(x2,y2),(0,255,0),2)
-            cv2.rectangle(img,(x1,y2-35),(x2,y2),(0,255,0),cv2.FILLED)
-            cv2.putText(img,name,(x1+6,y2-6),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(255,255,255),2)
-            markAttendance(name) # calls the function to mark attendance
-       
-    cv2.imshow('Webcam',img)
+                    y1, x2, y2, x1 = face_loc
+                    y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
 
-    key = cv2.waitKey(0)
+                    # Calculate the optimal text position
+                    text_width, text_height = cv2.getTextSize(name, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, 2)[0]
+                    max_text_width = x2 - x1 - 12  # Maximum width for text within the rectangle
+                    font_scale = min(1, max_text_width / text_width)
+                    text_x = x1 + 6
+                    text_y = max(y1 + text_height + 6, y2 - 6)
 
-    if key == 27 or key == 113: # terminates the program if 'esc' or 'q' is pressed
-        break
-    cv2.destroyAllWindows()
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
+                    cv2.putText(img, name, (text_x, text_y), cv2.FONT_HERSHEY_COMPLEX_SMALL, font_scale, (255, 255, 255), 2)
+
+                    if name not in class_names:
+                        store_encoding_to_db(name, encode_face)
+                        class_names.append(name)
+
+                    mark_attendance(name)
+
+            cv2.imshow('Webcam', img)  # Display the frame with face recognition
+
+            key = cv2.waitKey(1)
+            if key == 27 or key == 113:  # Break the loop if 'esc' or 'q' is pressed
+                break
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+    finally:
+        video_capture.release()  # Release the video capture
+        cv2.destroyAllWindows()  # Close OpenCV windows
+
+def main():
+    initialize_database()
+
+    webcam_thread_instance = threading.Thread(target=webcam_thread)  # Create a thread for the webcam
+    webcam_thread_instance.start()  # Start the webcam thread
+
+    webcam_thread_instance.join()  # Wait for the webcam thread to finish
+
+    connection.close()  # Close the MySQL connection
+
+if __name__ == "__main__":
+    main()  # Execute the main function when the script is run
