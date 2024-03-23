@@ -36,8 +36,11 @@ To use the AI Attendance System:
 - View attendance records in the generated CSV file, which will contain names in column A and dates with timestamps in subsequent columns.
 
 ## **Installation**
-1. Clone the repository:
-git clone https://github.com/sethidhruv188/AI-attendance-system.git
+## **Installation**
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/sethidhruv188/AI-attendance-system.git
 
 2. Install dependencies:
 pip install -r requirements.txt
