@@ -13,7 +13,7 @@ The AI Attendance System is a facial recognition-based attendance tracking appli
 - Multi-Day Support: Capable of storing attendance data for multiple days in the same CSV file, ensuring that previous data is preserved and not overridden.
 
 ## **How It Works**
-- <u> Database Initialization </u>: The system initializes a MySQL database to store facial encodings and individual identities.
+- <ins> Database Initialization </ins>: The system initializes a MySQL database to store facial encodings and individual identities.
 
 - Encoding Complete: Facial encodings are extracted from images stored in a designated folder and stored in the database.
 
