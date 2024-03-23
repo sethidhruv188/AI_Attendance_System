@@ -1,4 +1,4 @@
-# AI Attendance System
+# **AI Attendance System**
 The AI Attendance System is a facial recognition-based attendance tracking application designed to streamline the process of recording attendance for individuals. Leveraging computer vision and facial recognition technology, this system allows for efficient and accurate attendance tracking without the need for manual input.
 
 #Features
