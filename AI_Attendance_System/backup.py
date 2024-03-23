@@ -7,7 +7,6 @@ from datetime import datetime
 import os
 import glob
 import threading
-import csv
 
 # MySQL Database Configuration
 db_host = '127.0.0.1'  # Database host address
@@ -59,6 +58,13 @@ def store_encoding_to_db(name, encoding):
     cursor.execute("INSERT INTO testFace (name, face_encoding) VALUES (%s, %s)", (name, encoding_bytes))
     connection.commit()
 
+import csv
+from datetime import datetime
+import os
+
+import csv
+from datetime import datetime
+import os
 
 def is_name_present(name):
     """
@@ -74,30 +80,36 @@ def is_name_present(name):
                 return True
     return False
 
-
 def mark_attendance(name):
     """
     Mark attendance in the 'Attendance.csv' file.
     """
+    # Check if the name is already present
+    if is_name_present(name):
+        print(f"{name} is already marked.")
+        return
+
     now = datetime.now()
     date_string = now.strftime('%Y-%m-%d')
     time_string = now.strftime('%H:%M:%S')
 
-    # Check if the provided name is already present in the 'Attendance.csv' file
-    if is_name_present(name):
-        return
+    # Check if the CSV file exists
+    if os.path.isfile('Attendance.csv'):
+        # CSV file exists, append the name to the file
+        with open('Attendance.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([name])
+    else:
+        # CSV file doesn't exist, create a new one and add the 'Name' field
+        with open('Attendance.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Name'])
+            writer.writerow([name])
 
-    # Create or append to the CSV file
-    with open('Attendance.csv', 'a+', newline='') as f:
+# Example usage
+mark_attendance('DHRUV SETHI')
 
-        writer = csv.writer(f)
 
-        # If the file is empty, write the header
-        if os.path.getsize('Attendance.csv') == 0:
-            writer.writerow(['Name', date_string])  # Write the header
-
-        # Write the name, date, and time
-        writer.writerow([name, time_string])
 
 
 def webcam_thread():
@@ -181,9 +193,6 @@ def add_new_faces_to_database(image_folder_path):
 
 def main():
     initialize_database()
-
-    # Add new faces to the database from the 'Images
-
 
     # Add new faces to the database from the 'Images_test' folder
     add_new_faces_to_database("Images_test")
