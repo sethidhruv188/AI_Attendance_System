@@ -74,7 +74,6 @@ def is_name_present(name):
                 return True
     return False
 
-
 def mark_attendance(name):
     """
     Mark attendance in the 'Attendance.csv' file.
@@ -83,22 +82,64 @@ def mark_attendance(name):
     date_string = now.strftime('%Y-%m-%d')
     time_string = now.strftime('%H:%M:%S')
 
-    # Check if the provided name is already present in the 'Attendance.csv' file
-    if is_name_present(name):
-        return
-
     # Create or append to the CSV file
-    with open('Attendance.csv', 'a+', newline='') as f:
+    attendance_data = []
 
+    # If the file exists, read existing data
+    if os.path.isfile('Attendance.csv'):
+        with open('Attendance.csv', 'r') as f:
+            reader = csv.reader(f)
+            attendance_data = list(reader)
+
+    # Find the index of the name in the first column
+    name_index = -1
+    for i, row in enumerate(attendance_data):
+        if len(row) > 0 and row[0] == name:
+            name_index = i
+            break
+
+    if name_index == -1:
+        # Name not found, add a new row for the name
+        new_row = [name] + [''] * (len(attendance_data[0]) - 1 if attendance_data else 0)  # -1 to exclude the name column
+        attendance_data.append(new_row)
+        name_index = len(attendance_data) - 1
+
+    # Find the index of the current date column or insert it
+    current_date_index = None
+    for i, date in enumerate(attendance_data[0][1:], start=1):  # Start from index 1 to skip the name column
+        if date == date_string:
+            current_date_index = i
+            break
+
+    if current_date_index is None:
+        # Shift existing data one column to the right
+        for row in attendance_data:
+            row.insert(1, '')
+
+        # Update the first row with the current date in column B
+        if len(attendance_data) == 0 or len(attendance_data[0]) < 2 or attendance_data[0][1] != date_string:
+            for row in attendance_data:
+                row[1] = date_string
+        current_date_index = 1
+
+    # Check if the person was present in the previous day's attendance
+    prev_date_index = None
+    for i, date in enumerate(attendance_data[0][2:], start=2):
+        if date == date_string:
+            prev_date_index = i
+            break
+
+    # If the person was present in the previous day's attendance, populate the timestamp
+    if prev_date_index is not None and len(attendance_data[name_index]) > prev_date_index:
+        attendance_data[name_index][current_date_index] = attendance_data[name_index][prev_date_index]
+    else:
+        # Mark attendance for the name in column B
+        attendance_data[name_index][current_date_index] = time_string
+
+    # Write the updated data back to the CSV file
+    with open('Attendance.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-
-        # If the file is empty, write the header
-        if os.path.getsize('Attendance.csv') == 0:
-            writer.writerow(['Name', date_string])  # Write the header
-
-        # Write the name, date, and time
-        writer.writerow([name, time_string])
-
+        writer.writerows(attendance_data)
 
 def webcam_thread():
     """
