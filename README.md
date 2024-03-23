@@ -36,6 +36,7 @@ To use the AI Attendance System:
 
 # **Installation**
 To install the required libraries, run the following commands:
+
 ![image](https://github.com/sethidhruv188/AI_Attendance_System/assets/140970083/23511f5b-7f1f-476d-a305-0d84522a4630)
 
 
