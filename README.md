@@ -1,7 +1,7 @@
 # **AI Attendance System**
 The AI Attendance System is a facial recognition-based attendance tracking application designed to streamline the process of recording attendance for individuals. Leveraging computer vision and facial recognition technology, this system allows for efficient and accurate attendance tracking without the need for manual input.
 
-## <ins>**Features**</ins>
+## **Features**
 - <ins>Facial Recognition:</ins> Utilizes face recognition algorithms to identify individuals from webcam footage.
 
 - <ins>Database Integration:</ins> Stores facial encodings in a MySQL database for efficient retrieval and recognition.
@@ -36,9 +36,11 @@ To use the AI Attendance System:
 - View attendance records in the generated CSV file, which will contain names in column A and dates with timestamps in subsequent columns.
 
 ## **Installation**
-To install the required libraries, run the following commands:
+1. Clone the repository:
+git clone https://github.com/sethidhruv188/AI-attendance-system.git
 
-![image](https://github.com/sethidhruv188/AI_Attendance_System/assets/140970083/23511f5b-7f1f-476d-a305-0d84522a4630)
+2. Install dependencies:
+pip install -r requirements.txt
 
 
 # **Contributors**
@@ -46,3 +48,8 @@ To install the required libraries, run the following commands:
 
 # **License**
 - This project is licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://opensource.org/licenses/GPL-3.0). You can find a copy of the license in the [LICENSE](LICENSE) file.
+
+# **Acknowledgements**
+- This project utilizes the [face_recognition](https://github.com/ageitgey/face_recognition) library for face recognition.
+- Special thanks to [OpenCV](https://opencv.org/) for webcam integration.
+
