@@ -13,7 +13,7 @@ The AI Attendance System is a facial recognition-based attendance tracking appli
 - Multi-Day Support: Capable of storing attendance data for multiple days in the same CSV file, ensuring that previous data is preserved and not overridden.
 
 ## **How It Works**
-- Database Initialization: The system initializes a MySQL database to store facial encodings and individual identities.
+- <u> Database Initialization </u>: The system initializes a MySQL database to store facial encodings and individual identities.
 
 - Encoding Complete: Facial encodings are extracted from images stored in a designated folder and stored in the database.
 
@@ -44,4 +44,4 @@ To install the required libraries, run the following commands:
 - Dhruv Sethi
 
 # **License**
-- This project is licensed under the GNU General Public License v3.0 (GPL-3.0). You can find a copy of the license in the LICENSE file.
+- This project is licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://opensource.org/licenses/GPL-3.0). You can find a copy of the license in the [LICENSE](LICENSE) file.
