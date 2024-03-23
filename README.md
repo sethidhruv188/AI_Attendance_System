@@ -13,13 +13,13 @@ The AI Attendance System is a facial recognition-based attendance tracking appli
 - Multi-Day Support: Capable of storing attendance data for multiple days in the same CSV file, ensuring that previous data is preserved and not overridden.
 
 ## **How It Works**
--Database Initialization: The system initializes a MySQL database to store facial encodings and individual identities.
+- Database Initialization: The system initializes a MySQL database to store facial encodings and individual identities.
 
--Encoding Complete: Facial encodings are extracted from images stored in a designated folder and stored in the database.
+- Encoding Complete: Facial encodings are extracted from images stored in a designated folder and stored in the database.
 
--Webcam Recognition: Upon completion of encoding, the webcam is activated to recognize individuals in real-time.
+- Webcam Recognition: Upon completion of encoding, the webcam is activated to recognize individuals in real-time.
 
--Attendance Marking: Recognized individuals are marked as present in an attendance CSV file, with timestamps recorded under the respective date.
+- Attendance Marking: Recognized individuals are marked as present in an attendance CSV file, with timestamps recorded under the respective date.
 
 # **Usage**
 To use the AI Attendance System:
@@ -36,10 +36,8 @@ To use the AI Attendance System:
 
 # **Installation**
 To install the required libraries, run the following commands:
+![image](https://github.com/sethidhruv188/AI_Attendance_System/assets/140970083/23511f5b-7f1f-476d-a305-0d84522a4630)
 
-pip install opencv-python
-pip install face_recognition
-pip install pymysql
 
 # **Contributors**
 - Dhruv Sethi
