@@ -1,25 +1,26 @@
 # **AI Attendance System**
 The AI Attendance System is a facial recognition-based attendance tracking application designed to streamline the process of recording attendance for individuals. Leveraging computer vision and facial recognition technology, this system allows for efficient and accurate attendance tracking without the need for manual input.
 
-## **Features**
-- Facial Recognition: Utilizes face recognition algorithms to identify individuals from webcam footage.
+## <ins>**Features**</ins>
+- <ins>Facial Recognition:</ins> Utilizes face recognition algorithms to identify individuals from webcam footage.
 
-- Database Integration: Stores facial encodings in a MySQL database for efficient retrieval and recognition.
+- <ins>Database Integration:</ins> Stores facial encodings in a MySQL database for efficient retrieval and recognition.
 
-- Automatic Encoding: Automatically adds new individuals to the database by extracting and storing facial encodings from images in a specified folder.
+- <ins>Automatic Encoding:</ins> Automatically adds new individuals to the database by extracting and storing facial encodings from images in a specified folder.
 
-- Attendance Logging: Marks attendance in a CSV file, recording timestamps under the respective date for each recognized individual.
+- <ins>Attendance Logging:</ins> Marks attendance in a CSV file, recording timestamps under the respective date for each recognized individual.
 
-- Multi-Day Support: Capable of storing attendance data for multiple days in the same CSV file, ensuring that previous data is preserved and not overridden.
+- <ins>Multi-Day Support:</ins> Capable of storing attendance data for multiple days in the same CSV file, ensuring that previous data is preserved and not overridden.
 
 ## **How It Works**
 - <ins> Database Initialization </ins>: The system initializes a MySQL database to store facial encodings and individual identities.
 
-- Encoding Complete: Facial encodings are extracted from images stored in a designated folder and stored in the database.
+- <ins> Encoding Complete </ins>: Facial encodings are extracted from images stored in a designated folder and stored in the database.
 
-- Webcam Recognition: Upon completion of encoding, the webcam is activated to recognize individuals in real-time.
+- <ins> Webcam Recognition </ins>: Upon completion of encoding, the webcam is activated to recognize individuals in real-time.
 
-- Attendance Marking: Recognized individuals are marked as present in an attendance CSV file, with timestamps recorded under the respective date.
+- <ins> Attendance Marking </ins>: Recognized individuals are marked as present in an attendance CSV file, with timestamps recorded under the respective date.
+
 
 ## **Usage**
 To use the AI Attendance System:
