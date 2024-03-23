@@ -39,7 +39,7 @@ To use the AI Attendance System:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/sethidhruv188/AI-attendance-system.git
+   git clone https://github.com/sethidhruv188/AI_Attendance_System.git
 
 2. **Install dependencies:**
    ```bash
