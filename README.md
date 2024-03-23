@@ -21,7 +21,7 @@ The AI Attendance System is a facial recognition-based attendance tracking appli
 
 - Attendance Marking: Recognized individuals are marked as present in an attendance CSV file, with timestamps recorded under the respective date.
 
-# **Usage**
+## **Usage**
 To use the AI Attendance System:
 
 - Ensure that the required libraries (OpenCV, face_recognition, pymysql) are installed.
@@ -34,7 +34,7 @@ To use the AI Attendance System:
 
 - View attendance records in the generated CSV file, which will contain names in column A and dates with timestamps in subsequent columns.
 
-# **Installation**
+## **Installation**
 To install the required libraries, run the following commands:
 
 ![image](https://github.com/sethidhruv188/AI_Attendance_System/assets/140970083/23511f5b-7f1f-476d-a305-0d84522a4630)
@@ -44,4 +44,4 @@ To install the required libraries, run the following commands:
 - Dhruv Sethi
 
 # **License**
-- This project is licensed under the MIT License.
+- This project is licensed under the GNU General Public License v3.0 (GPL-3.0). You can find a copy of the license in the LICENSE file.
