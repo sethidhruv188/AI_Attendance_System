@@ -91,6 +91,12 @@ def mark_attendance(name):
             reader = csv.reader(f)
             attendance_data = list(reader)
 
+    # Ensure that the attendance data has consistent number of columns
+    max_columns = max(len(row) for row in attendance_data)
+    for row in attendance_data:
+        while len(row) < max_columns:
+            row.append(None)  # Fill missing cells with empty strings
+
     # Find the index of the name in the first column
     name_index = -1
     for i, row in enumerate(attendance_data):
@@ -100,7 +106,7 @@ def mark_attendance(name):
 
     if name_index == -1:
         # Name not found, add a new row for the name
-        new_row = [name] + [''] * (len(attendance_data[0]) - 1 if attendance_data else 0)  # -1 to exclude the name column
+        new_row = [name] + [None] * (len(attendance_data[0]) - 1 if attendance_data else 0)  # -1 to exclude the name column
         attendance_data.append(new_row)
         name_index = len(attendance_data) - 1
 
@@ -129,9 +135,9 @@ def mark_attendance(name):
             prev_date_index = i
             break
 
-    # If the person was present in the previous day's attendance, populate the timestamp
-    if prev_date_index is not None and len(attendance_data[name_index]) > prev_date_index:
-        attendance_data[name_index][current_date_index] = attendance_data[name_index][prev_date_index]
+    # If the person was present in the previous day's attendance but not today, leave the cell blank
+    if prev_date_index is not None and len(attendance_data[name_index]) > prev_date_index and attendance_data[name_index][prev_date_index] != '':
+        attendance_data[name_index][current_date_index] = ''
     else:
         # Mark attendance for the name in column B
         attendance_data[name_index][current_date_index] = time_string
@@ -140,6 +146,7 @@ def mark_attendance(name):
     with open('Attendance.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(attendance_data)
+
 
 def webcam_thread():
     """
