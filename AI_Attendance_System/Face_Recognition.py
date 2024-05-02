@@ -74,7 +74,7 @@ def is_name_present(name):
                 return True
     return False
 
-def mark_attendance(name):
+def mark_attendance(name, present=True):
     """
     Mark attendance in the 'Attendance.csv' file.
     """
@@ -95,7 +95,7 @@ def mark_attendance(name):
     max_columns = max(len(row) for row in attendance_data)
     for row in attendance_data:
         while len(row) < max_columns:
-            row.append(None)  # Fill missing cells with empty strings
+            row.append(None)  # Fill missing cells with None
 
     # Find the index of the name in the first column
     name_index = -1
@@ -128,24 +128,46 @@ def mark_attendance(name):
                 row[1] = date_string
         current_date_index = 1
 
-    # Check if the person was present in the previous day's attendance
-    prev_date_index = None
-    for i, date in enumerate(attendance_data[0][2:], start=2):
-        if date == date_string:
-            prev_date_index = i
-            break
+    # Create a variable to hold the value to be written to the CSV file
+    value_to_write = time_string if present else ''
 
-    # If the person was present in the previous day's attendance but not today, leave the cell blank
-    if prev_date_index is not None and len(attendance_data[name_index]) > prev_date_index and attendance_data[name_index][prev_date_index] != '':
-        attendance_data[name_index][current_date_index] = ''
-    else:
-        # Mark attendance for the name in column B
-        attendance_data[name_index][current_date_index] = time_string
+    # Write the updated attendance record to the CSV file
+    attendance_data[name_index][current_date_index] = value_to_write
 
     # Write the updated data back to the CSV file
     with open('Attendance.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(attendance_data)
+
+    remove_datestamps()
+
+def remove_datestamps():
+    """
+    Remove datestamps from cells (excluding the first row) in the 'Attendance.csv' file.
+    """
+    attendance_data = []
+
+    # Read existing attendance data from the CSV file
+    if os.path.isfile('Attendance.csv'):
+        with open('Attendance.csv', 'r') as f:
+            reader = csv.reader(f)
+            attendance_data = list(reader)
+
+    # Remove datestamps from cells (excluding the first row)
+    for row in attendance_data[1:]:
+        for i, cell in enumerate(row):
+            if i != 0:  # Skip the first column (name column)
+                if cell and ':' in cell:  # Check if the cell contains a timestamp
+                    continue  # Skip cells containing timestamps
+                row[i] = ''  # Clear datestamps from all columns except the first column
+
+    # Write the updated data back to the CSV file
+    with open('Attendance.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(attendance_data)
+
+
+
 
 
 def webcam_thread():
