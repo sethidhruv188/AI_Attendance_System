@@ -263,8 +263,4 @@ def main():
     webcam_thread_instance.join()
 
     connection.close()
-
-
-if __name__ == "__main__":
-    main()
   
